@@ -1,4 +1,4 @@
-# debugged: angle, explosion
+# debugged: angle, explosion dev
 import pygame,sys, math, time
 from pygame.locals import *
 from tkinter import *
