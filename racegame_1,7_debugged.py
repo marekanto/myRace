@@ -77,7 +77,7 @@ explosion = pygame.image.load("explosion.png")
 pressed_1 = "false"
 pressed_1_l = "false"
 pressed_1_r = "false"
-pressed_1_b = "false" # Back - Rückwärts
+pressed_1_b = "false" # Back
 
 bew_counter_1 = 0
 winkel_1 = 0
@@ -290,6 +290,7 @@ while x == 1:
                             # the window size is kept 160 pixels in the center of the frame(80 pixels above the center and 80 below)
                             if center_up[0] < (width // 2 - windowSize // 2):
                                 pressed_1_l = "true"
+                                print('left turn')
                                 # cv2.putText(frame,'LEFT',(20,50),cv2.FONT_HERSHEY_SIMPLEX,1,(0,0,255))
                                 #PressKey(A)
                                 current_key_pressed.add("A")
@@ -299,6 +300,7 @@ while x == 1:
                                 pressed_1_r = "true"
                                 # cv2.putText(frame,'RIGHT',(20,50),cv2.FONT_HERSHEY_SIMPLEX,1,(0,0,255))
                                 #PressKey(D)
+                                print('right turn')
                                 current_key_pressed.add("D")
                                 keyPressed = True
                                 keyPressed_lr = True
@@ -324,12 +326,14 @@ while x == 1:
                                 # cv2.putText(frame,'UP',(200,50),cv2.FONT_HERSHEY_SIMPLEX,1,(0,0,255))
                                 #PressKey(W)
                                 keyPressed = True
+                                print('up')
                                 current_key_pressed.add("W")
                             elif center_down[1] > ((3 * height) // 4 + 20) and (width // 4) < center_down[0] < ((3 * width) // 4):
                                 pressed_1_b = "true"
                                 # cv2.putText(frame,'DOWN',(200,50),cv2.FONT_HERSHEY_SIMPLEX,1,(0,0,255))
                                 #PressKey(S)
                                 keyPressed = True
+                                print('down turn')
                                 current_key_pressed.add("S")
 
                     # show the frame to our screen
@@ -341,7 +345,7 @@ while x == 1:
 
                     # draw box for left (D)
                     frame_copy = cv.rectangle(frame_copy, (width // 2 + windowSize // 2, 0), (width - 2, height // 2),(255, 255, 255), 1)
-                    cv.putText(frame_copy, 'RIGHT', (438, 30), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255))
+                    cv.putText(frame_copy, 'RIGHT', (300, 30), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255))
 
                     # draw box for left (W)
                     frame_copy = cv.rectangle(frame_copy, (width // 4, (height // 2) + 5),(3 * width // 4, 3 * height // 4), (255, 255, 255), 1)
@@ -357,18 +361,18 @@ while x == 1:
                     # We need to release the pressed key if none of the key is pressed else the program will keep on sending
                     #the presskey command
                     # if not keyPressed and len(current_key_pressed) != 0:
-                    #     for key in current_key_pressed:
-                    #         current_key_pressed.remove(key)
-                    #     current_key_pressed = set()
-                    # to release keys for left/right with keys of up/down remain pressed
+                    #                     #     for key in current_key_pressed:
+                    #                     #         current_key_pressed.remove(key)
+                    #                     #     current_key_pressed = set()
+                    #                     # #to release keys for left/right with keys of up/down remain pressed
 
-                    # if not keyPressed_lr and (("A" in current_key_pressed) or ("D" in current_key_pressed)):
-                    #     if "A" in current_key_pressed:
-                    #         pressed_1_l = "false"
-                    #         #current_key_pressed.remove("A")
-                    #     elif "D" in current_key_pressed:
-                    #         pressed_1_r = "false"
-                    #         #current_key_pressed.remove("D")
+                    if not keyPressed_lr and (("A" in current_key_pressed) or ("D" in current_key_pressed)):
+                        if "A" in current_key_pressed:
+                            pressed_1_l = "false"
+                            current_key_pressed.remove("A")
+                        elif "D" in current_key_pressed:
+                            pressed_1_r = "false"
+                            current_key_pressed.remove("D")
 
                     key = cv.waitKey(1) & 0xFF
 
@@ -379,12 +383,6 @@ while x == 1:
                 video.release()
                 # close all windows
                 cv.destroyAllWindows()
-
-
-
-
-
-
 
 
             if event.key == K_ESCAPE:
