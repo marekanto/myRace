@@ -117,6 +117,7 @@ while x == 1:
     #if time == 125: # Sekunden * fps
     #    pygame.mixer.music.play()
     #    time = 0
+
 # Spieler 1
     if count_destr_1 == 0:
         #print(1)
@@ -336,6 +337,8 @@ while x == 1:
                                 print('down turn')
                                 current_key_pressed.add("S")
 
+
+
                     # show the frame to our screen
                     frame_copy = frame.copy()
 
@@ -361,10 +364,10 @@ while x == 1:
                     # We need to release the pressed key if none of the key is pressed else the program will keep on sending
                     #the presskey command
                     # if not keyPressed and len(current_key_pressed) != 0:
-                    #                     #     for key in current_key_pressed:
-                    #                     #         current_key_pressed.remove(key)
-                    #                     #     current_key_pressed = set()
-                    #                     # #to release keys for left/right with keys of up/down remain pressed
+                    #                         for key in current_key_pressed:
+                    #                             current_key_pressed.remove(key)
+                    #                         current_key_pressed = set()
+                    #                     #to release keys for left/right with keys of up/down remain pressed
 
                     if not keyPressed_lr and (("A" in current_key_pressed) or ("D" in current_key_pressed)):
                         if "A" in current_key_pressed:
