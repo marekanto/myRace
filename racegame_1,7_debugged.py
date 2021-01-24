@@ -418,7 +418,11 @@ while x == 1:
                         count_destr_1 = 25
                         player_1.left = 100
                         player_1.top = 165
-                        continue
+                        pressed_1 = "false"
+                        pressed_1_l = "false"
+                        pressed_1_r = "false"
+                        pressed_1_b = "false"
+
                     pygame.display.update()
 
                     # time_ += 1
