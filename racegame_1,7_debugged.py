@@ -1,5 +1,6 @@
-# debugged: angle, explosion dev
-import pygame,sys, math, time
+# debugged: angle, explosion
+# dev
+import pygame, sys, math, time
 from pygame.locals import *
 import numpy as np
 import cv2 as cv
@@ -10,9 +11,9 @@ from tkinter import messagebox
 
 pygame.init()
 # define the lower and upper boundaries of the "blue" object in the HSV color space
-#https://stackoverflow.com/questions/10948589/choosing-the-correct-upper-and-lower-hsv-boundaries-for-color-detection-withcv
+# https://stackoverflow.com/questions/10948589/choosing-the-correct-upper-and-lower-hsv-boundaries-for-color-detection-withcv
 blueLower = np.array([53, 187, 0])
-blueUpper = np.array([180,255,255])
+blueUpper = np.array([180, 255, 255])
 bg = (255, 255, 255)
 red = (255, 0, 0)
 blue = (0, 0, 255)
@@ -21,19 +22,19 @@ ww = pygame.display.Info().current_w
 wh = pygame.display.Info().current_h
 
 pygame.mixer.init()
-channel1 = pygame.mixer.Channel(0) # argument must be int
+channel1 = pygame.mixer.Channel(0)  # argument must be int
 channel2 = pygame.mixer.Channel(1)
 
 music = pygame.mixer.Sound("Teenage_Crime.wav")
 music.set_volume(0.0)
 channel1.play(music)
 
-pygame.font.init() # you have to call this at the start,
-                   # if you want to use this module.
+pygame.font.init()  # you have to call this at the start,
+# if you want to use this module.
 myfont = pygame.font.SysFont('Comic Sans MS', 30)
 
 window = pygame.display.set_mode((1440, 800))
-#pygame.display.set_caption("MyRace")
+# pygame.display.set_caption("MyRace")
 window.fill(bg)
 font = pygame.font.SysFont("comicsansms", 72)
 
@@ -47,11 +48,11 @@ label = myfont.render("Python and Pygame are Fun!", 1, blue)
 window.blit(label, (100, 100))
 
 stretch = []
-#stretch.append(pygame.image.load("bla_1.png"))
+# stretch.append(pygame.image.load("bla_1.png"))
 a = 1
 a_counter = 6
 
-while a == 1:    
+while a == 1:
     try:
         exec("stretch.append(pygame.image.load('track_" + str(a_counter) + ".png'))")
     except:
@@ -59,7 +60,7 @@ while a == 1:
     a_counter += 1
 
 c_road = (100, 100, 100, 255)
-c_fence  = (255, 5, 5, 255)
+c_fence = (255, 5, 5, 255)
 c_finish = (255, 255, 5, 255)
 
 counter = 0
@@ -73,30 +74,21 @@ image_1 = pygame.image.load("car_1.png")
 
 explosion = pygame.image.load("explosion.png")
 
-#  player 1 variables
 pressed_1 = "false"
 pressed_1_l = "false"
 pressed_1_r = "false"
-pressed_1_b = "false" # Back
+pressed_1_b = "false"  # Back
 
 bew_counter_1 = 0
 winkel_1 = 0
 destroy_1 = 0
 count_destr_1 = 0
 
-# player 2 variables
-# pressed_2 = "false"
-# pressed_2_l = "false"
-# pressed_2_r = "false"
-# pressed_2_b = "false"
-#
-# bew_counter_2 = 0
-# winkel_2 = 0
-# destroy_2 = 0
-# count_destr_2 = 0
+#  player 1 variables
+
 
 mvsp = 10
-winkel_ch = 4 # change angle
+winkel_ch = 4  # change angle
 
 clock = pygame.time.Clock()
 fps = 50
@@ -112,15 +104,15 @@ while x == 1:
         player_1.top = 165
 
     # if count_destr_2 == 1:
-        # player_2.left = 100
-        # player_2.top = 195
-    #if time == 125: # Sekunden * fps
+    # player_2.left = 100
+    # player_2.top = 195
+    # if time == 125: # Sekunden * fps
     #    pygame.mixer.music.play()
     #    time = 0
 
-# Spieler 1
+    # Spieler 1
     if count_destr_1 == 0:
-        #print(1)
+        # print(1)
         if pressed_1 == "true" and bew_counter_1 < mvsp:
             bew_counter_1 += 0.25
         if pressed_1_b == "true":
@@ -130,73 +122,71 @@ while x == 1:
             winkel_1 -= winkel_ch
         elif pressed_1_l == "true" and bew_counter_1 < -2:
             winkel_1 += winkel_ch
-        
+
         if pressed_1_r == "true" and bew_counter_1 > 2:
             winkel_1 += winkel_ch
         elif pressed_1_r == "true" and bew_counter_1 < -2:
             winkel_1 -= winkel_ch
-
 
         if pressed_1 == "false" and bew_counter_1 > 0:
             bew_counter_1 -= 0.25
         if pressed_1_b == "false" and bew_counter_1 < 0:
             bew_counter_1 += 0.25
 
-
-        b_1 = math.cos(math.radians(winkel_1)) * bew_counter_1 # Berechnet die Länge der am winkel_1 anliegenden Kathete.
-        #fisch.top += b
-        #print("b = " + str(b))
+        b_1 = math.cos(
+            math.radians(winkel_1)) * bew_counter_1  # Berechnet die Länge der am winkel_1 anliegenden Kathete.
+        # fisch.top += b
+        # print("b = " + str(b))
         a_1 = math.sin(math.radians(winkel_1)) * bew_counter_1
         player_1.left += round(b_1)
         player_1.top += round(a_1)
 
-        image_1_neu = pygame.transform.rotate(image_1, winkel_1*-1)
+        image_1_neu = pygame.transform.rotate(image_1, winkel_1 * -1)
 
     else:
         count_destr_1 -= 1
 
-# Spieler 2
-#     if count_destr_2 == 0:
-#         if pressed_2 == "true" and bew_counter_2 < mvsp:
-#             bew_counter_2 += 0.25
-#         if pressed_2_b == "true":
-#             bew_counter_2 -= 0.25
-#
-#         if pressed_2_l == "true" and bew_counter_2 > 2:
-#             winkel_2 -= winkel_ch
-#         elif pressed_2_l == "true" and bew_counter_2 < -2:
-#             winkel_2 += winkel_ch
-#
-#         if pressed_2_r == "true" and bew_counter_2 > 2:
-#             winkel_2 += winkel_ch
-#         elif pressed_2_r == "true" and bew_counter_2 < -2:
-#             winkel_2 -= winkel_ch
-#
-#
-#         if pressed_2 == "false" and bew_counter_2 > 0:
-#             bew_counter_2 -= 0.25
-#         if pressed_2_b == "false" and bew_counter_2 < 0:
-#             bew_counter_2 += 0.25
-#
-#         b_2 = math.cos(math.radians(winkel_2)) * bew_counter_2 # Berechnet die Länge der am winkel_1 anliegenden Kathete.
-#         #fisch.top += b
-#         #print("b = " + str(b))
-#         a_2 = math.sin(math.radians(winkel_2)) * bew_counter_2
-        # player_2.left += round(b_2)
-        # player_2.top += round(a_2)
+    # Spieler 2
+    #     if count_destr_2 == 0:
+    #         if pressed_2 == "true" and bew_counter_2 < mvsp:
+    #             bew_counter_2 += 0.25
+    #         if pressed_2_b == "true":
+    #             bew_counter_2 -= 0.25
+    #
+    #         if pressed_2_l == "true" and bew_counter_2 > 2:
+    #             winkel_2 -= winkel_ch
+    #         elif pressed_2_l == "true" and bew_counter_2 < -2:
+    #             winkel_2 += winkel_ch
+    #
+    #         if pressed_2_r == "true" and bew_counter_2 > 2:
+    #             winkel_2 += winkel_ch
+    #         elif pressed_2_r == "true" and bew_counter_2 < -2:
+    #             winkel_2 -= winkel_ch
+    #
+    #
+    #         if pressed_2 == "false" and bew_counter_2 > 0:
+    #             bew_counter_2 -= 0.25
+    #         if pressed_2_b == "false" and bew_counter_2 < 0:
+    #             bew_counter_2 += 0.25
+    #
+    #         b_2 = math.cos(math.radians(winkel_2)) * bew_counter_2 # Berechnet die Länge der am winkel_1 anliegenden Kathete.
+    #         #fisch.top += b
+    #         #print("b = " + str(b))
+    #         a_2 = math.sin(math.radians(winkel_2)) * bew_counter_2
+    # player_2.left += round(b_2)
+    # player_2.top += round(a_2)
 
-        # image_2_neu = pygame.transform.rotate(image_2, winkel_2*-1)
+    # image_2_neu = pygame.transform.rotate(image_2, winkel_2*-1)
 
     # else:
     #     count_destr_2 -=1
 
     for event in pygame.event.get():
 
-
         if event.type == QUIT:
-            #pygame.quit()
+            # pygame.quit()
             x = 0
-            #sys.exit()
+            # sys.exit()
 
         if event.type == KEYDOWN:
             if event.key == pygame.K_c:
@@ -257,12 +247,12 @@ while x == 1:
 
                     # find the contours(blue object's boundary) in the left and right frame to find the center of the object
                     # syntax: (img,mode,method)
-                    cnts_up = cv.findContours(up_mask.copy(), cv.RETR_EXTERNAL,cv.CHAIN_APPROX_SIMPLE)
+                    cnts_up = cv.findContours(up_mask.copy(), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
                     cnts_up = imutils.grab_contours(cnts_up)
                     center_up = None
 
                     cnts_down = cv.findContours(down_mask.copy(), cv.RETR_EXTERNAL,
-                                                 cv.CHAIN_APPROX_SIMPLE)
+                                                cv.CHAIN_APPROX_SIMPLE)
                     cnts_down = imutils.grab_contours(cnts_down)
                     center_down = None
 
@@ -284,7 +274,7 @@ while x == 1:
                         if radius > circle_radius:
                             # draw the circle and centroid on the frame,
                             cv.circle(frame, (int(x), int(y)), int(radius),
-                                       (0, 255, 255), 2)
+                                      (0, 255, 255), 2)
                             cv.circle(frame, center_up, 5, (0, 0, 255), -1)
 
                             # TOP LEFT is "A" key pressed and TOP RIGHT is for "D" key pressed
@@ -293,14 +283,14 @@ while x == 1:
                                 pressed_1_l = "true"
                                 print('left turn')
                                 # cv2.putText(frame,'LEFT',(20,50),cv2.FONT_HERSHEY_SIMPLEX,1,(0,0,255))
-                                #PressKey(A)
+                                # PressKey(A)
                                 current_key_pressed.add("A")
                                 keyPressed = True
                                 keyPressed_lr = True
                             elif center_up[0] > (width // 2 + windowSize // 2):
                                 pressed_1_r = "true"
                                 # cv2.putText(frame,'RIGHT',(20,50),cv2.FONT_HERSHEY_SIMPLEX,1,(0,0,255))
-                                #PressKey(D)
+                                # PressKey(D)
                                 print('right turn')
                                 current_key_pressed.add("D")
                                 keyPressed = True
@@ -318,75 +308,163 @@ while x == 1:
                         if radius2 > circle_radius:
                             # draw the circle and centroid on the frame,
                             cv.circle(frame, (int(x2) + width // 4, int(y2) + height // 2), int(radius2),
-                                       (0, 255, 255), 2)
+                                      (0, 255, 255), 2)
                             cv.circle(frame, center_down, 5, (0, 0, 255), -1)
 
                             # Upper half of bottom half is "W" key pressed and bottom part of bottom half is for "s" key pressed
-                            if (height // 2) < center_down[1] < ((3 * height) // 4) and (width // 4) < center_down[0] < ((3 * width) // 4):
+                            if (height // 2) < center_down[1] < ((3 * height) // 4) and (width // 4) < center_down[
+                                0] < ((3 * width) // 4):
                                 pressed_1 = "true"
                                 # cv2.putText(frame,'UP',(200,50),cv2.FONT_HERSHEY_SIMPLEX,1,(0,0,255))
-                                #PressKey(W)
+                                # PressKey(W)
                                 keyPressed = True
                                 print('up')
                                 current_key_pressed.add("W")
-                            elif center_down[1] > ((3 * height) // 4 + 20) and (width // 4) < center_down[0] < ((3 * width) // 4):
+                                pressed_1 = "true"
+                            elif center_down[1] > ((3 * height) // 4 + 20) and (width // 4) < center_down[0] < (
+                                    (3 * width) // 4):
                                 pressed_1_b = "true"
                                 # cv2.putText(frame,'DOWN',(200,50),cv2.FONT_HERSHEY_SIMPLEX,1,(0,0,255))
-                                #PressKey(S)
+                                # PressKey(S)
                                 keyPressed = True
                                 print('down turn')
                                 current_key_pressed.add("S")
+                        if not keyPressed_lr and (("A" in current_key_pressed) or ("D" in current_key_pressed)):
+                            if "A" in current_key_pressed:
+                                pressed_1_l = "false"
+                                current_key_pressed.remove("A")
+                            elif "D" in current_key_pressed:
+                                pressed_1_r = "false"
+                                current_key_pressed.remove("D")
 
+                        key = cv.waitKey(1) & 0xFF
 
+                        # if the 'q' key is pressed, stop the loop
+                        if key == ord("q"):
+                            break
+                    if count_destr_1 == 0:
+                        # print(1)
+                        if pressed_1 == "true" and bew_counter_1 < mvsp:
+                            bew_counter_1 += 0.25
+                        if pressed_1_b == "true":
+                            bew_counter_1 -= 0.25
+
+                        if pressed_1_l == "true" and bew_counter_1 > 2:
+                            winkel_1 -= winkel_ch
+                        elif pressed_1_l == "true" and bew_counter_1 < -2:
+                            winkel_1 += winkel_ch
+
+                        if pressed_1_r == "true" and bew_counter_1 > 2:
+                            winkel_1 += winkel_ch
+                        elif pressed_1_r == "true" and bew_counter_1 < -2:
+                            winkel_1 -= winkel_ch
+
+                        if pressed_1 == "false" and bew_counter_1 > 0:
+                            bew_counter_1 -= 0.25
+                        if pressed_1_b == "false" and bew_counter_1 < 0:
+                            bew_counter_1 += 0.25
+
+                        b_1 = math.cos(
+                            math.radians(
+                                winkel_1)) * bew_counter_1  # Berechnet die Länge der am winkel_1 anliegenden Kathete.
+                        # fisch.top += b
+                        # print("b = " + str(b))
+                        a_1 = math.sin(math.radians(winkel_1)) * bew_counter_1
+                        player_1.left += round(b_1)
+                        player_1.top += round(a_1)
+
+                        image_1_neu = pygame.transform.rotate(image_1, winkel_1 * -1)
+
+                    else:
+                        count_destr_1 -= 1
+                    window.fill((0, 0, 0))
+                    window.blit(stretch[counter], (0, 0))
+
+                    if count_destr_1 == 0:
+                        try:
+                            if not window.get_at((player_1.left + 10, player_1.top + 10)) == c_road:
+                                #    print(window.get_at(((player_1.left + 10, player_1.top + 10))))
+                                #    print("Crash")
+                                if bew_counter_1 > 3:
+                                    bew_counter_1 = 2
+                                if bew_counter_1 < -3:
+                                    bew_counter_1 = -2
+                                    # print("Spieler 1\n")
+
+                            if window.get_at((player_1.left + 10, player_1.top + 10)) == c_fence:
+                                destroy_1 = 1
+
+                            if window.get_at((player_1.left + 10, player_1.top + 10)) == c_finish:
+                                destroy_1 = 1
+
+                        except:
+                            destroy_1 = 1
+
+                        if destroy_1 == 0:
+                            window.blit(image_1_neu, player_1)
+
+                    else:
+                        window.blit(explosion, player_1)
+
+                    if destroy_1 == 1:
+                        window.blit(explosion, player_1)
+                        pygame.display.update()
+                        # crash = pygame.mixer.Sound('crash.wav')
+                        # crash.set_volume(1.0)
+                        # channel2.play(crash)
+                        destroy_1 = 0
+                        winkel_1 = 0
+                        # time.sleep(0.5)
+                        count_destr_1 = 25
+                        player_1.left = 100
+                        player_1.top = 165
+                        continue
+                    pygame.display.update()
+
+                    # time_ += 1
+                    clock.tick(fps)
 
                     # show the frame to our screen
                     frame_copy = frame.copy()
 
                     # draw box for left (A)
-                    frame_copy = cv.rectangle(frame_copy, (0, 0), (width // 2 - windowSize // 2, height // 2),(255, 255, 255), 1)
+                    frame_copy = cv.rectangle(frame_copy, (0, 0), (width // 2 - windowSize // 2, height // 2),
+                                              (255, 255, 255), 1)
                     cv.putText(frame_copy, 'LEFT', (10, 30), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255))
 
                     # draw box for left (D)
-                    frame_copy = cv.rectangle(frame_copy, (width // 2 + windowSize // 2, 0), (width - 2, height // 2),(255, 255, 255), 1)
+                    frame_copy = cv.rectangle(frame_copy, (width // 2 + windowSize // 2, 0), (width - 2, height // 2),
+                                              (255, 255, 255), 1)
                     cv.putText(frame_copy, 'RIGHT', (300, 30), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255))
 
                     # draw box for left (W)
-                    frame_copy = cv.rectangle(frame_copy, (width // 4, (height // 2) + 5),(3 * width // 4, 3 * height // 4), (255, 255, 255), 1)
-                    cv.putText(frame_copy, 'UP', (width // 4, (height // 2) + 33), cv.FONT_HERSHEY_SIMPLEX, 1,(255, 255, 255))
+                    frame_copy = cv.rectangle(frame_copy, (width // 4, (height // 2) + 5),
+                                              (3 * width // 4, 3 * height // 4), (255, 255, 255), 1)
+                    cv.putText(frame_copy, 'UP', (width // 4, (height // 2) + 33), cv.FONT_HERSHEY_SIMPLEX, 1,
+                               (255, 255, 255))
 
                     # draw box for left (S)
-                    frame_copy = cv.rectangle(frame_copy, (width // 4, ((3 * height) // 4) + 5),(3 * width // 4, height), (255, 255, 255), 1)
-                    cv.putText(frame_copy, 'DOWN', ((3 * width // 4) - 100, (height // 2) + 108),cv.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255))
+                    frame_copy = cv.rectangle(frame_copy, (width // 4, ((3 * height) // 4) + 5),
+                                              (3 * width // 4, height), (255, 255, 255), 1)
+                    cv.putText(frame_copy, 'DOWN', ((3 * width // 4) - 100, (height // 2) + 108),
+                               cv.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255))
 
                     # display final frame
                     cv.imshow("Frame", frame_copy)
 
                     # We need to release the pressed key if none of the key is pressed else the program will keep on sending
-                    #the presskey command
+                    # the presskey command
                     # if not keyPressed and len(current_key_pressed) != 0:
                     #                         for key in current_key_pressed:
                     #                             current_key_pressed.remove(key)
                     #                         current_key_pressed = set()
                     #                     #to release keys for left/right with keys of up/down remain pressed
 
-                    if not keyPressed_lr and (("A" in current_key_pressed) or ("D" in current_key_pressed)):
-                        if "A" in current_key_pressed:
-                            pressed_1_l = "false"
-                            current_key_pressed.remove("A")
-                        elif "D" in current_key_pressed:
-                            pressed_1_r = "false"
-                            current_key_pressed.remove("D")
 
-                    key = cv.waitKey(1) & 0xFF
-
-                    # if the 'q' key is pressed, stop the loop
-                    if key == ord("q"):
-                        break
 
                 video.release()
                 # close all windows
                 cv.destroyAllWindows()
-
 
             if event.key == K_ESCAPE:
                 x = 0
@@ -400,10 +478,10 @@ while x == 1:
                 # player_2.left = 100
                 # player_2.top = 195
                 winkel_2 = 0
-                
+
                 if counter >= len(stretch):
                     counter = 0
-                
+
             if event.key == K_UP:
                 pressed_1 = "true"
             if event.key == K_LEFT:
@@ -422,7 +500,7 @@ while x == 1:
             # if event.key == K_s:
             #     pressed_2_b = "true"
 
-            #if event.key == K_RETURN:
+            # if event.key == K_RETURN:
             #    player_1.left = stp[0]
             #    player_1.top = stp[1]
 
@@ -454,13 +532,13 @@ while x == 1:
     if count_destr_1 == 0:
         try:
             if not window.get_at((player_1.left + 10, player_1.top + 10)) == c_road:
-            #    print(window.get_at(((player_1.left + 10, player_1.top + 10))))
-            #    print("Crash")
+                #    print(window.get_at(((player_1.left + 10, player_1.top + 10))))
+                #    print("Crash")
                 if bew_counter_1 > 3:
                     bew_counter_1 = 2
                 if bew_counter_1 < -3:
                     bew_counter_1 = -2
-                    #print("Spieler 1\n")
+                    # print("Spieler 1\n")
 
             if window.get_at((player_1.left + 10, player_1.top + 10)) == c_fence:
                 destroy_1 = 1
@@ -471,39 +549,13 @@ while x == 1:
         except:
             destroy_1 = 1
 
+
         if destroy_1 == 0:
             window.blit(image_1_neu, player_1)
 
     else:
         window.blit(explosion, player_1)
 
-
-# Spieler 2 Kollisionserkennung
-#     if count_destr_2 == 0:
-#         try:
-#             if not window.get_at((player_2.left + 10, player_2.top + 10)) == c_road:
-#                 if bew_counter_2 > 3: # Erzeugt Ruckel-Effekt
-#                     bew_counter_2 = 2
-#                 if bew_counter_2 < -3:
-#                     bew_counter_2 = -2
-#                     #print("Spieler 2\n")
-#                     #print(window.get_at((player_2.left + 10, player_2.top + 10)))
-#
-#             if window.get_at((player_2.left + 10, player_2.top + 10)) == c_fence:
-#                 destroy_2 = 1
-#
-#             if window.get_at((player_2.left + 10, player_2.top + 10)) == c_finish:
-#                 destroy_2 = 1
-#                 #counter += 1
-#
-#         except:
-#             destroy_2 = 1
-#
-#         if destroy_2 == 0:
-#             window.blit(image_2_neu, player_2)
-#
-#     else:
-#         window.blit(explosion, player_2)
 
 
     if destroy_1 == 1:
@@ -514,22 +566,16 @@ while x == 1:
         # channel2.play(crash)
         destroy_1 = 0
         winkel_1 = 0
-        #time.sleep(0.5)
+        # time.sleep(0.5)
         count_destr_1 = 25
 
-    #
-    # if destroy_2 == 1:
-    #     window.blit(explosion, player_2)
-    #     pygame.display.update()
-    #     destroy_2 = 0
-    #     winkel_2 = 0
-    #     #time.sleep(0.5)
-    #     count_destr_2 = 25
+
 
     pygame.display.update()
 
-    #time_ += 1
+    # time_ += 1
     clock.tick(fps)
+
 str(time.time() - startTime)
 pygame.quit()
 #
