@@ -6,6 +6,7 @@ import numpy as np
 import cv2 as cv
 import imutils
 import time
+import os
 from tkinter import *
 from tkinter import messagebox
 
@@ -33,7 +34,7 @@ pygame.font.init()  # you have to call this at the start,
 # if you want to use this module.
 myfont = pygame.font.SysFont('Comic Sans MS', 30)
 
-window = pygame.display.set_mode((1440, 800))
+window = pygame.display.set_mode((1600, 900))
 # pygame.display.set_caption("MyRace")
 window.fill(bg)
 font = pygame.font.SysFont("comicsansms", 72)
@@ -46,6 +47,11 @@ done = False
 label = myfont.render("Python and Pygame are Fun!", 1, blue)
 # put the label object on the screen at point x=100, y=100
 window.blit(label, (100, 100))
+infoX = 1365
+infoY = 600
+font = pygame.font.Font('freesansbold.ttf', 18)
+text1 = font.render('0..9 - Change Mutation', True, (255,255,255))
+text2 = font.render('LMB - Select/Unselect', True, (255,255,255))
 
 stretch = []
 # stretch.append(pygame.image.load("bla_1.png"))
@@ -68,9 +74,7 @@ counter = 0
 startTime = time.time()
 
 player_1 = pygame.Rect(100, 165, 20, 20)
-image_1 = pygame.image.load("car_1.png")
-# player_2 = pygame.Rect(100, 195, 20, 20)
-# image_2 = pygame.image.load("car_2.png")
+image_1 = pygame.image.load("blue_small_rotated.png")
 
 explosion = pygame.image.load("explosion.png")
 
@@ -102,13 +106,6 @@ while x == 1:
     if count_destr_1 == 1:
         player_1.left = 100
         player_1.top = 165
-
-    # if count_destr_2 == 1:
-    # player_2.left = 100
-    # player_2.top = 195
-    # if time == 125: # Sekunden * fps
-    #    pygame.mixer.music.play()
-    #    time = 0
 
     # Spieler 1
     if count_destr_1 == 0:
@@ -146,41 +143,6 @@ while x == 1:
     else:
         count_destr_1 -= 1
 
-    # Spieler 2
-    #     if count_destr_2 == 0:
-    #         if pressed_2 == "true" and bew_counter_2 < mvsp:
-    #             bew_counter_2 += 0.25
-    #         if pressed_2_b == "true":
-    #             bew_counter_2 -= 0.25
-    #
-    #         if pressed_2_l == "true" and bew_counter_2 > 2:
-    #             winkel_2 -= winkel_ch
-    #         elif pressed_2_l == "true" and bew_counter_2 < -2:
-    #             winkel_2 += winkel_ch
-    #
-    #         if pressed_2_r == "true" and bew_counter_2 > 2:
-    #             winkel_2 += winkel_ch
-    #         elif pressed_2_r == "true" and bew_counter_2 < -2:
-    #             winkel_2 -= winkel_ch
-    #
-    #
-    #         if pressed_2 == "false" and bew_counter_2 > 0:
-    #             bew_counter_2 -= 0.25
-    #         if pressed_2_b == "false" and bew_counter_2 < 0:
-    #             bew_counter_2 += 0.25
-    #
-    #         b_2 = math.cos(math.radians(winkel_2)) * bew_counter_2 # Berechnet die Länge der am winkel_1 anliegenden Kathete.
-    #         #fisch.top += b
-    #         #print("b = " + str(b))
-    #         a_2 = math.sin(math.radians(winkel_2)) * bew_counter_2
-    # player_2.left += round(b_2)
-    # player_2.top += round(a_2)
-
-    # image_2_neu = pygame.transform.rotate(image_2, winkel_2*-1)
-
-    # else:
-    #     count_destr_2 -=1
-
     for event in pygame.event.get():
 
         if event.type == QUIT:
@@ -189,6 +151,8 @@ while x == 1:
             # sys.exit()
 
         if event.type == KEYDOWN:
+            if event.key == pygame.K_x:
+                exec(open("./nnCarGame.py").read())
             if event.key == pygame.K_c:
                 # Staring the camera
                 video = cv.VideoCapture(0)
@@ -479,8 +443,6 @@ while x == 1:
                 player_1.top = 165
                 winkel_1 = 0
 
-                # player_2.left = 100
-                # player_2.top = 195
                 winkel_2 = 0
 
                 if counter >= len(stretch):
@@ -495,21 +457,6 @@ while x == 1:
             if event.key == K_DOWN:
                 pressed_1_b = "true"
 
-            # if event.key == K_w:
-            #     pressed_2 = "true"
-            # if event.key == K_a:
-            #     pressed_2_l = "true"
-            # if event.key == K_d:
-            #     pressed_2_r = "true"
-            # if event.key == K_s:
-            #     pressed_2_b = "true"
-
-            # if event.key == K_RETURN:
-            #    player_1.left = stp[0]
-            #    player_1.top = stp[1]
-
-            #    bew_counter_1 = 0
-            #    winkel_1 = 0
 
         if event.type == KEYUP:
             if event.key == K_UP:
@@ -520,15 +467,6 @@ while x == 1:
                 pressed_1_r = "false"
             if event.key == K_DOWN:
                 pressed_1_b = "false"
-
-            # if event.key == K_w:
-            #     pressed_2 = "false"
-            # if event.key == K_a:
-            #     pressed_2_l = "false"
-            # if event.key == K_d:
-            #     pressed_2_r = "false"
-            # if event.key == K_s:
-            #     pressed_2_b = "false"
 
     window.fill((0, 0, 0))
     window.blit(stretch[counter], (0, 0))
