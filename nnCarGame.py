@@ -1,15 +1,9 @@
 import pygame
 import random
-import os
 import math
 import numpy as np
-import time
-import sys
-from datetime import datetime
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
-from PIL import Image
-from operator import attrgetter
 
 pygame.init() #Initialize pygame
 #Some variables initializations
@@ -33,7 +27,7 @@ lines = True #If true then lines of player are shown
 player = True #If true then player is shown
 display_info = True #If true then display info is shown
 frames = 0
-maxspeed = 10 
+maxspeed = 15
 number_track = 1
 
 white_small_car = pygame.image.load('blue_small.png')
@@ -41,8 +35,8 @@ white_big_car = pygame.image.load('blue_big.png')
 green_small_car = pygame.image.load('red_small.png')
 green_big_car = pygame.image.load('red_big.png')
 
-bg = pygame.image.load('track_6.png')
-bg4 = pygame.image.load('track_6_1.png')
+bg = pygame.image.load('track_7.png')
+bg4 = pygame.image.load('track_7_1.png')
 
 
 def calculateDistance(x1,y1,x2,y2): #Used to calculate distance between points
@@ -245,183 +239,6 @@ def uniformCrossOverBiases(parent1, parent2, child1, child2): #Given two parent 
         for j in range(child2.sizes[i+1]):
                 child2.biases[i][j] = genome2[count]
                 count += 1
-    return 
-
-def generateRandomMap(screen):
-    SCREEN = screen
-    
-    BLACK = (0, 0, 0)
-    WHITE = (255, 255, 255)
-    GREEN = (0, 255, 128)
-
-    pygame.display.Info().current_w
-    wh = pygame.display.Info().current_h
-    WINDOW_HEIGHT = 730
-    WINDOW_WIDTH = 1460 #These are for the maze/grid, not for the pygame window size
-
-    blockSize = 146 #Set the size of the grid block
-    rows, cols = (int(WINDOW_WIDTH/blockSize), int(WINDOW_HEIGHT/blockSize))  
-    maze = Maze(rows,cols,0,0)
-    
-    trackLenght = 1
-    movex = 70
-    movey = 85
-    
-    #Choose a start cell
-    startx, starty = 0, 3
-    currentCell = maze.cell_at(startx, starty)
-    
-    #Load track images!
-    straight1 = pygame.image.load('Images\TracksMapGen\Straight1.png')
-    straight1Rect = straight1.get_rect()
-
-    straight2 = pygame.image.load('Images\TracksMapGen\Straight2.png')
-    straight2Rect = straight2.get_rect()
-
-    curve1 = pygame.image.load('Images\TracksMapGen\Curve1.png')
-    curve1Rect = curve1.get_rect()
-
-    curve2 = pygame.image.load('Images\TracksMapGen\Curve2.png')
-    curve2Rect = curve2.get_rect()
-
-    curve3 = pygame.image.load('Images\TracksMapGen\Curve3.png')
-    curve3Rect = curve3.get_rect()
-
-    curve4 = pygame.image.load('Images\TracksMapGen\Curve4.png')
-    curve4Rect = curve4.get_rect()
-
-    straight1Top = pygame.image.load('Images\TracksMapGen\Straight1Top.png')
-    straight1RectTop = straight1Top.get_rect()
-
-    straight2Top = pygame.image.load('Images\TracksMapGen\Straight2Top.png')
-    straight2RectTop = straight2Top.get_rect()
-
-    curve1Top = pygame.image.load('Images\TracksMapGen\Curve1Top.png')
-    curve1RectTop = curve1Top.get_rect()
-
-    curve2Top = pygame.image.load('Images\TracksMapGen\Curve2Top.png')
-    curve2RectTop = curve2Top.get_rect()
-
-    curve3Top = pygame.image.load('Images\TracksMapGen\Curve3Top.png')
-    curve3RectTop = curve3Top.get_rect()
-
-    curve4Top = pygame.image.load('Images\TracksMapGen\Curve4Top.png')
-    curve4RectTop = curve4Top.get_rect()
-    
-    initialTop = pygame.image.load('Images\TracksMapGen\Initial.png')
-    initialRectTop = initialTop.get_rect()
-
-    bg = pygame.image.load('Images\TracksMapGen\Background.png')
-
-    while True:
-
-        #CurrentCell is the one at (0,3) position, im gonna look if there are unvisited cells from there
-        if len(maze.find_valid_neighbours(currentCell)) > 0:
-            if currentCell.x == 0 and currentCell.y == 3: #Second cell is always the one on top of first cell bc first cell is always a straight vertical track
-                oldCell = currentCell
-                currentCell = maze.cell_at(oldCell.x,oldCell.y-1)
-                currentCell.color = GREEN
-                oldCell.knock_down_wall(currentCell, "N")
-                trackLenght += 1 #Keep track of length so to discard very short generated tracks
-            else:
-                random_unvisited_direction = random.choice(maze.find_valid_neighbours(currentCell))[0] #Pick a random direction to move
-                oldCell = currentCell
-                if random_unvisited_direction == "N": #Move according to the direction picked
-                    currentCell = maze.cell_at(oldCell.x,oldCell.y-1)
-                elif random_unvisited_direction == "S":
-                    currentCell = maze.cell_at(oldCell.x,oldCell.y+1)
-                elif random_unvisited_direction == "E":
-                    currentCell = maze.cell_at(oldCell.x+1,oldCell.y)
-                elif random_unvisited_direction == "W":
-                    currentCell = maze.cell_at(oldCell.x-1,oldCell.y)
-                
-                oldCell.knock_down_wall(currentCell, random_unvisited_direction)
-                trackLenght += 1
-            
-        else:
-            #Track is ready (back in initial position)! lets check if its long enough
-            if currentCell.x == 0 and currentCell.y == 4 and trackLenght > 40:
-                SCREEN.fill((0,0,0))
-                currentCell.knock_down_wall(maze.cell_at(0,3), "N")
-                
-                for x in range(0, WINDOW_WIDTH, blockSize):
-                    for y in range(0, WINDOW_HEIGHT, blockSize):
-                        currentCell = maze.cell_at(int(x/blockSize),int(y/blockSize))
-                        currentCell.color = (0,0,1,255)
-                
-                for x in range(0, WINDOW_WIDTH, blockSize):
-                    for y in range(0, WINDOW_HEIGHT, blockSize):
-                        currentCell = maze.cell_at(int(x/blockSize),int(y/blockSize))
-                        
-                        if currentCell.walls["N"] == False and currentCell.walls["S"] == False:
-                            SCREEN.blit(straight2, straight2Rect.move(x+movex,y+movey))  
-                        elif currentCell.walls["E"] == False and currentCell.walls["W"] == False:
-                            SCREEN.blit(straight1, straight1Rect.move(x+movex,y+movey))  
-                        elif currentCell.walls["N"] == False and currentCell.walls["W"] == False:
-                            SCREEN.blit(curve3, curve3Rect.move(x+movex,y+movey)) 
-                        elif currentCell.walls["W"] == False and currentCell.walls["S"] == False:
-                            SCREEN.blit(curve2, curve2Rect.move(x+movex,y+movey))     
-                        elif currentCell.walls["S"] == False and currentCell.walls["E"] == False:
-                            SCREEN.blit(curve1, curve1Rect.move(x+movex,y+movey)) 
-                        elif currentCell.walls["E"] == False and currentCell.walls["N"] == False:
-                            SCREEN.blit(curve4, curve4Rect.move(x+movex,y+movey)) 
-                
-                #Save track and change background to transparent because that is how the main program needs the track image to be
-                #You can leave the black background if you change the collision condition on the main program
-                pygame.image.save(SCREEN, "randomGeneratedTrackBack.png")
-                img = Image.open("randomGeneratedTrackBack.png")
-                img = img.convert("RGBA")
-                pixdata = img.load()
-                for y in range(img.size[1]):
-                    for x in range(img.size[0]):
-                        if pixdata[x, y] == (0, 0, 0, 255) or pixdata[x, y] == (0, 0, 1, 255):
-                            pixdata[x, y] = (0, 0, 0, 0)
-                img.save("randomGeneratedTrackBack.png")
-
-                SCREEN.blit(bg, (0,0))  
-                for x in range(0, WINDOW_WIDTH, blockSize):
-                    for y in range(0, WINDOW_HEIGHT, blockSize):
-                        if x == 0 and y == 3*blockSize:
-                            SCREEN.blit(initialTop, initialRectTop.move(x-20+movex,y+movey))
-                        else:
-                            currentCell = maze.cell_at(int(x/blockSize),int(y/blockSize))
-                            if currentCell.walls["N"] == False and currentCell.walls["S"] == False:
-                                SCREEN.blit(straight2Top, straight2RectTop.move(x-20+movex,y+movey))  
-                            elif currentCell.walls["E"] == False and currentCell.walls["W"] == False:
-                                SCREEN.blit(straight1Top, straight1RectTop.move(x+movex,y-20+movey))  
-                            elif currentCell.walls["N"] == False and currentCell.walls["W"] == False:
-                                SCREEN.blit(curve3Top, curve3RectTop.move(x-15+movex,y-15+movey)) 
-                            elif currentCell.walls["W"] == False and currentCell.walls["S"] == False:
-                                SCREEN.blit(curve2Top, curve2RectTop.move(x-15+movex,y-15+movey))     
-                            elif currentCell.walls["E"] == False and currentCell.walls["N"] == False:
-                                SCREEN.blit(curve4Top, curve4RectTop.move(x-15+movex,y-15+movey))
-                            elif currentCell.walls["S"] == False and currentCell.walls["E"] == False:
-                                SCREEN.blit(curve1Top, curve1RectTop.move(x-15+movex,y-15+movey)) 
-                          
-                pygame.image.save(SCREEN, "randomGeneratedTrackFront.png")
-
-                
-                break
-
-                
-            else:
-                #It wasnt long enough so we start again
-                trackLenght = 0
-                for x in range(0, WINDOW_WIDTH, blockSize):
-                    for y in range(0, WINDOW_HEIGHT, blockSize):
-                        maze.cell_at(int(x/blockSize),int(y/blockSize)).walls["N"] = True
-                        maze.cell_at(int(x/blockSize),int(y/blockSize)).walls["S"] = True
-                        maze.cell_at(int(x/blockSize),int(y/blockSize)).walls["E"] = True
-                        maze.cell_at(int(x/blockSize),int(y/blockSize)).walls["W"] = True
-                        maze.cell_at(int(x/blockSize),int(y/blockSize)).color = 0, 0, 0
-                
-                #Force occupied cells
-                maze.cell_at(3,3).walls["N"] = False
-                maze.cell_at(4,3).walls["N"] = False
-                maze.cell_at(5,3).walls["N"] = False
-                maze.cell_at(6,3).walls["N"] = False
-
-                currentCell = maze.cell_at(startx, starty)
     return
 
 class Cell:
@@ -441,29 +258,6 @@ class Cell:
         #Knock down the wall between cells self and other
         self.walls[wall] = False
         other.walls[Cell.wall_pairs[wall]] = False
-
-class Maze:
-    #A Maze, represented as a grid of cells.
-    def __init__(self, nx, ny, ix=0, iy=0):
-        self.nx, self.ny = nx, ny
-        self.ix, self.iy = ix, iy
-        self.maze_map = [[Cell(x, y) for y in range(ny)] for x in range(nx)]
-    def cell_at(self, x, y):
-        return self.maze_map[x][y]
-    def find_valid_neighbours(self, cell):
-        #Return a list of unvisited neighbours to cell.
-        delta = [('W', (-1, 0)),
-                 ('E', (1, 0)),
-                 ('S', (0, 1)),
-                 ('N', (0, -1))]
-        neighbours = []
-        for direction, (dx, dy) in delta:
-            x2, y2 = cell.x + dx, cell.y + dy
-            if (0 <= x2 < self.nx) and (0 <= y2 < self.ny):
-                neighbour = self.cell_at(x2, y2)
-                if neighbour.has_all_walls():
-                    neighbours.append((direction, neighbour))
-        return neighbours
 
 class Car:
   def __init__(self, sizes):
@@ -491,8 +285,8 @@ class Car:
     #Boolean used for toggling distance lines
     self.showlines = False
     #Initial location of the car
-    self.x = 520
-    self.y = 80
+    self.x = 100
+    self.y = 200
     self.center = self.x, self.y
     #Height and width of the car
     self.height = 35 #45
@@ -500,16 +294,16 @@ class Car:
     #These are the four corners of the car, using polygon instead of rectangle object, when rotating or moving the car, we rotate or move these
     self.d = self.x-(self.width/2),self.y-(self.height/2)
     self.c = self.x + self.width-(self.width/2), self.y-(self.height/2)
-    self.b = self.x + self.width-(self.width/2), self.y + self.height-(self.height/2) #El rectangulo está centrado en (x,y)
-    self.a = self.x-(self.width/2), self.y + self.height-(self.height/2)              #(a), (b), (c), (d) son los vertices
+    self.b = self.x + self.width-(self.width/2), self.y + self.height-(self.height/2) #The rectangle is centered at (x, y)
+    self.a = self.x-(self.width/2), self.y + self.height-(self.height/2)              #(a), (b), (c), (d) are the vertices
     #Velocity, acceleration and direction of the car
     self.velocity = 0
-    self.acceleration = 0  
+    self.acceleration = 0
     self.angle = 180
     #Boolean which goes true when car collides
     self.collided = False
     #Car color and image
-    self.color = white
+    self.color = blue
     self.car_image = white_small_car
   def set_accel(self, accel): 
     self.acceleration = accel
@@ -519,7 +313,7 @@ class Car:
         self.angle = 0
     if self.angle < 0:
         self.angle = 360 + self.angle
-  def update(self): #En cada frame actualizo los vertices (traslacion y rotacion) y los puntos de colision
+  def update(self): #In each frame I update the vertices (translation and rotation) and the collision points
     self.score += self.velocity
     if self.acceleration != 0:
         self.velocity += self.acceleration
@@ -535,8 +329,8 @@ class Car:
     
     self.d = self.x-(self.width/2),self.y-(self.height/2)
     self.c = self.x + self.width-(self.width/2), self.y-(self.height/2)
-    self.b = self.x + self.width-(self.width/2), self.y + self.height-(self.height/2) #El rectangulo está centrado en (x,y)
-    self.a = self.x-(self.width/2), self.y + self.height-(self.height/2)              #(a), (b), (c), (d) son los vertices
+    self.b = self.x + self.width-(self.width/2), self.y + self.height-(self.height/2) #The rectangle is centered at (x, y)
+    self.a = self.x-(self.width/2), self.y + self.height-(self.height/2)              #(a), (b), (c), (d) are the vertices
         
     self.a = rotation((self.x,self.y), self.a, math.radians(self.angle)) 
     self.b = rotation((self.x,self.y), self.b, math.radians(self.angle))  
@@ -544,13 +338,11 @@ class Car:
     self.d = rotation((self.x,self.y), self.d, math.radians(self.angle))    
     
     self.c1 = move((self.x,self.y),self.angle,10)
-    while bg4.get_at((int(self.c1[0]),int(self.c1[1]))).a!=0:
-        self.aaa = bg4.get_at((int(self.c1[0]),int(self.c1[1]))).a
-        self.c1 = move((self.c1[0],self.c1[1]),self.angle,10)
+    while bg4.get_at((int(self.c1[0]),int(self.c1[1]))).a != 0:
+        self.c1 = move((self.c1[0], self.c1[1]), self.angle, 10)
 
-    while bg4.get_at((int(self.c1[0]),int(self.c1[1]))).a==0:
-        self.c1 = move((self.c1[0],self.c1[1]),self.angle,-1)
-        self.aaa = bg4.get_at((int(self.c1[0]), int(self.c1[1]))).a
+    while bg4.get_at((int(self.c1[0]), int(self.c1[1]))).a == 0:
+        self.c1 = move((self.c1[0], self.c1[1]), self.angle, -1)
 
 
 
@@ -618,8 +410,8 @@ class Car:
         return False    
 
   def resetPosition(self):
-      self.x = 520
-      self.y = 80
+      self.x = 100
+      self.y = 200
       self.angle = 180
       return
       
@@ -652,10 +444,10 @@ text4 = font.render('L - Show/Hide Lines', True, white)
 text5 = font.render('R - Reset', True, white)
 text6 = font.render('B - Breed', True, white)
 text7 = font.render('C - Clean', True, white)
-text8 = font.render('N - Next Track', True, white)
+# text8 = font.render('N - Next Track', True, white)
 text9 = font.render('A - Toggle Player', True, white)
 text10 = font.render('D - Toggle Info', True, white)
-text11 = font.render('M - Breed and Next Track', True, white)
+# text11 = font.render('M - Breed and Next Track', True, white)
 text1Rect = text1.get_rect().move(infoX,infoY)
 text2Rect = text2.get_rect().move(infoX,infoY+text1Rect.height)
 text3Rect = text3.get_rect().move(infoX,infoY+2*text1Rect.height)
@@ -663,10 +455,10 @@ text4Rect = text4.get_rect().move(infoX,infoY+3*text1Rect.height)
 text5Rect = text5.get_rect().move(infoX,infoY+4*text1Rect.height)
 text6Rect = text6.get_rect().move(infoX,infoY+5*text1Rect.height)
 text7Rect = text7.get_rect().move(infoX,infoY+6*text1Rect.height)
-text8Rect = text8.get_rect().move(infoX,infoY+7*text1Rect.height)
-text9Rect = text9.get_rect().move(infoX,infoY+8*text1Rect.height)
-text10Rect = text10.get_rect().move(infoX,infoY+9*text1Rect.height)
-text11Rect = text11.get_rect().move(infoX,infoY+10*text1Rect.height)
+# text8Rect = text8.get_rect().move(infoX,infoY+7*text1Rect.height)
+text9Rect = text9.get_rect().move(infoX,infoY+7*text1Rect.height)
+text10Rect = text10.get_rect().move(infoX,infoY+8*text1Rect.height)
+# text11Rect = text11.get_rect().move(infoX,infoY+10*text1Rect.height)
 
 def displayTexts():  
     infotextX = 20
@@ -703,10 +495,10 @@ def displayTexts():
     gameDisplay.blit(text5, text5Rect) 
     gameDisplay.blit(text6, text6Rect)
     gameDisplay.blit(text7, text7Rect)   
-    gameDisplay.blit(text8, text8Rect)  
+    # gameDisplay.blit(text8, text8Rect)
     gameDisplay.blit(text9, text9Rect)     
     gameDisplay.blit(text10, text10Rect) 
-    gameDisplay.blit(text11, text11Rect)  
+    # gameDisplay.blit(text11, text11Rect)
     
     gameDisplay.blit(infotext1, infotext1Rect)  
     gameDisplay.blit(infotext2, infotext2Rect)  
@@ -734,7 +526,7 @@ auxcar = Car([inputLayer, hiddenLayer, outputLayer])
 for i in range(num_of_nnCars):
 	nnCars.append(Car([inputLayer, hiddenLayer, outputLayer]))
    
-def redrawGameWindow(): #Called on very frame   
+def redrawGameWindow(): #Called on every frame
 
     global alive  
     global frames
@@ -806,7 +598,7 @@ while True:
                     nncar.y = 610
                     nncar.angle = 180
                     nncar.collided = False
-                generateRandomMap(gameDisplay)
+
                 bg = pygame.image.load('randomGeneratedTrackFront.png')
                 bg4 = pygame.image.load('randomGeneratedTrackBack.png')
 
@@ -905,9 +697,9 @@ while True:
                         nncar.y = 610
                         nncar.angle = 180
                         nncar.collided = False
-                    generateRandomMap(gameDisplay)
-                    bg = pygame.image.load('randomGeneratedTrackFront.png')
-                    bg4 = pygame.image.load('randomGeneratedTrackBack.png')
+                    # generateRandomMap(gameDisplay)
+                    # bg = pygame.image.load('randomGeneratedTrackFront.png')
+                    # bg4 = pygame.image.load('randomGeneratedTrackBack.png')
             if event.key == ord ( "r" ):
                 generation = 1
                 alive = num_of_nnCars
@@ -952,7 +744,7 @@ while True:
             if mouses[0]:
                 pos = pygame.mouse.get_pos()
                 point = Point(pos[0], pos[1])
-                #Revisar la lista de autos y ver cual estaba ahi
+                #Check the car list and see which one was there
                 for nncar in nnCars:  
                     polygon = Polygon([nncar.a, nncar.b, nncar.c, nncar.d])
                     if (polygon.contains(point)):

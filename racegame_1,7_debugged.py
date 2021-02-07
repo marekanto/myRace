@@ -1,14 +1,12 @@
 # debugged: angle, explosion
 # dev
-import pygame, sys, math, time
+import pygame
+import math
 from pygame.locals import *
 import numpy as np
 import cv2 as cv
 import imutils
 import time
-import os
-from tkinter import *
-from tkinter import messagebox
 
 pygame.init()
 # define the lower and upper boundaries of the "blue" object in the HSV color space
@@ -44,14 +42,14 @@ clock = pygame.time.Clock()
 done = False
 
 # apply it to text on a label
-label = myfont.render("Python and Pygame are Fun!", 1, blue)
+label = myfont.render("Python and Pygame are Fun!", True, blue)
 # put the label object on the screen at point x=100, y=100
 window.blit(label, (100, 100))
 infoX = 1365
 infoY = 600
 font = pygame.font.Font('freesansbold.ttf', 18)
-text1 = font.render('0..9 - Change Mutation', True, (255,255,255))
-text2 = font.render('LMB - Select/Unselect', True, (255,255,255))
+text1 = font.render('0..9 - Change Mutation', True, (255, 255, 255))
+text2 = font.render('LMB - Select/Unselect', True, (255, 255, 255))
 
 stretch = []
 # stretch.append(pygame.image.load("bla_1.png"))
@@ -84,7 +82,7 @@ pressed_1_r = "false"
 pressed_1_b = "false"  # Back
 
 bew_counter_1 = 0
-winkel_1 = 0
+angle_1 = 0
 destroy_1 = 0
 count_destr_1 = 0
 
@@ -92,7 +90,7 @@ count_destr_1 = 0
 
 
 mvsp = 10
-winkel_ch = 4  # change angle
+angle_ch = 4  # change angle
 
 clock = pygame.time.Clock()
 fps = 50
@@ -116,14 +114,14 @@ while x == 1:
             bew_counter_1 -= 0.25
 
         if pressed_1_l == "true" and bew_counter_1 > 2:
-            winkel_1 -= winkel_ch
+            angle_1 -= angle_ch
         elif pressed_1_l == "true" and bew_counter_1 < -2:
-            winkel_1 += winkel_ch
+            angle_1 += angle_ch
 
         if pressed_1_r == "true" and bew_counter_1 > 2:
-            winkel_1 += winkel_ch
+            angle_1 += angle_ch
         elif pressed_1_r == "true" and bew_counter_1 < -2:
-            winkel_1 -= winkel_ch
+            angle_1 -= angle_ch
 
         if pressed_1 == "false" and bew_counter_1 > 0:
             bew_counter_1 -= 0.25
@@ -131,14 +129,14 @@ while x == 1:
             bew_counter_1 += 0.25
 
         b_1 = math.cos(
-            math.radians(winkel_1)) * bew_counter_1  # Berechnet die Länge der am winkel_1 anliegenden Kathete.
+            math.radians(angle_1)) * bew_counter_1  # Berechnet die Länge der am angle_1 anliegenden Kathete.
         # fisch.top += b
         # print("b = " + str(b))
-        a_1 = math.sin(math.radians(winkel_1)) * bew_counter_1
+        a_1 = math.sin(math.radians(angle_1)) * bew_counter_1
         player_1.left += round(b_1)
         player_1.top += round(a_1)
 
-        image_1_neu = pygame.transform.rotate(image_1, winkel_1 * -1)
+        image_1_new = pygame.transform.rotate(image_1, angle_1 * -1)
 
     else:
         count_destr_1 -= 1
@@ -259,6 +257,22 @@ while x == 1:
                                 current_key_pressed.add("D")
                                 keyPressed = True
                                 keyPressed_lr = True
+                    # We need to release the pressed key if none of the key is pressed else the program will keep on sending
+                    # the presskey command
+                    if not keyPressed and len(current_key_pressed) != 0:
+                        pressed_1_l = "false"
+                        pressed_1_r = "false"
+                        pressed_1_b = "false"
+                        pressed_1 = "false"
+                        current_key_pressed = set()
+                    # to release keys for left/right with keys of up/down remain pressed
+                    if not keyPressed_lr and (("L" in current_key_pressed) or ("R" in current_key_pressed)):
+                        if "L" in current_key_pressed:
+                            pressed_1_l = "false"
+                            current_key_pressed.remove("L")
+                        elif "R" in current_key_pressed:
+                            pressed_1_r = "false"
+                            current_key_pressed.remove("R")
 
                     # only proceed if at least one contour was found
                     if len(cnts_down) > 0:
@@ -278,7 +292,6 @@ while x == 1:
                             # Upper half of bottom half is "W" key pressed and bottom part of bottom half is for "s" key pressed
                             if (height // 2) < center_down[1] < ((3 * height) // 4) and (width // 4) < center_down[
                                 0] < ((3 * width) // 4):
-                                pressed_1 = "true"
                                 # cv2.putText(frame,'UP',(200,50),cv2.FONT_HERSHEY_SIMPLEX,1,(0,0,255))
                                 # PressKey(W)
                                 keyPressed = True
@@ -314,14 +327,14 @@ while x == 1:
                             bew_counter_1 -= 0.25
 
                         if pressed_1_l == "true" and bew_counter_1 > 2:
-                            winkel_1 -= winkel_ch
+                            angle_1 -= angle_ch
                         elif pressed_1_l == "true" and bew_counter_1 < -2:
-                            winkel_1 += winkel_ch
+                            angle_1 += angle_ch
 
                         if pressed_1_r == "true" and bew_counter_1 > 2:
-                            winkel_1 += winkel_ch
+                            angle_1 += angle_ch
                         elif pressed_1_r == "true" and bew_counter_1 < -2:
-                            winkel_1 -= winkel_ch
+                            angle_1 -= angle_ch
 
                         if pressed_1 == "false" and bew_counter_1 > 0:
                             bew_counter_1 -= 0.25
@@ -330,14 +343,14 @@ while x == 1:
 
                         b_1 = math.cos(
                             math.radians(
-                                winkel_1)) * bew_counter_1  # Berechnet die Länge der am winkel_1 anliegenden Kathete.
+                                angle_1)) * bew_counter_1  # Berechnet die Länge der am angle_1 anliegenden Kathete.
                         # fisch.top += b
                         # print("b = " + str(b))
-                        a_1 = math.sin(math.radians(winkel_1)) * bew_counter_1
+                        a_1 = math.sin(math.radians(angle_1)) * bew_counter_1
                         player_1.left += round(b_1)
                         player_1.top += round(a_1)
 
-                        image_1_neu = pygame.transform.rotate(image_1, winkel_1 * -1)
+                        image_1_new = pygame.transform.rotate(image_1, angle_1 * -1)
 
                     else:
                         count_destr_1 -= 1
@@ -365,7 +378,7 @@ while x == 1:
                             destroy_1 = 1
 
                         if destroy_1 == 0:
-                            window.blit(image_1_neu, player_1)
+                            window.blit(image_1_new, player_1)
 
                     else:
                         window.blit(explosion, player_1)
@@ -377,7 +390,7 @@ while x == 1:
                         # crash.set_volume(1.0)
                         # channel2.play(crash)
                         destroy_1 = 0
-                        winkel_1 = 0
+                        angle_1 = 0
                         # time.sleep(0.5)
                         count_destr_1 = 25
                         player_1.left = 100
@@ -428,8 +441,6 @@ while x == 1:
                     #                         current_key_pressed = set()
                     #                     #to release keys for left/right with keys of up/down remain pressed
 
-
-
                 video.release()
                 # close all windows
                 cv.destroyAllWindows()
@@ -441,9 +452,9 @@ while x == 1:
                 counter += 1
                 player_1.left = 100
                 player_1.top = 165
-                winkel_1 = 0
+                angle_1 = 0
 
-                winkel_2 = 0
+                angle_2 = 0
 
                 if counter >= len(stretch):
                     counter = 0
@@ -456,7 +467,6 @@ while x == 1:
                 pressed_1_r = "true"
             if event.key == K_DOWN:
                 pressed_1_b = "true"
-
 
         if event.type == KEYUP:
             if event.key == K_UP:
@@ -491,14 +501,11 @@ while x == 1:
         except:
             destroy_1 = 1
 
-
         if destroy_1 == 0:
-            window.blit(image_1_neu, player_1)
+            window.blit(image_1_new, player_1)
 
     else:
         window.blit(explosion, player_1)
-
-
 
     if destroy_1 == 1:
         window.blit(explosion, player_1)
@@ -507,11 +514,9 @@ while x == 1:
         # crash.set_volume(1.0)
         # channel2.play(crash)
         destroy_1 = 0
-        winkel_1 = 0
+        angle_1 = 0
         # time.sleep(0.5)
         count_destr_1 = 25
-
-
 
     pygame.display.update()
 
